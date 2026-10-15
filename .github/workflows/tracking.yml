@@ -4,9 +4,9 @@ name: tracking
 on:
   push:
     branches: [main, develop]
-    paths: ["services/tracking/**", "services/common/**", "services/requirements.txt", "services/Dockerfile", ".github/workflows/tracking.yml"]
+    paths: ["tracking/**", "common/**", "requirements.txt", "Dockerfile", ".github/workflows/tracking.yml"]
   pull_request:
-    paths: ["services/tracking/**", "services/common/**", "services/requirements.txt", "services/Dockerfile"]
+    paths: ["tracking/**", "common/**", "requirements.txt", "Dockerfile"]
 
 permissions:
   contents: read
@@ -14,14 +14,14 @@ permissions:
 
 env:
   SERVICIO: tracking
-  IMAGEN: ghcr.io/kevinso4/tracklogi-tracking
+  IMAGEN: ghcr.io/kevinso4/logitrack-tracking
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: services
+        working-directory: .
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,7 +30,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: services/requirements.txt
+          cache-dependency-path: requirements.txt
       - name: Dependencias
         run: pip install -r requirements.txt ruff pip-audit
       - name: Lint
@@ -63,7 +63,7 @@ jobs:
       - name: Build y push (etiqueta por SHA corto + latest)
         uses: docker/build-push-action@v6
         with:
-          context: services
+          context: .
           build-args: SERVICE=${{ env.SERVICIO }}
           push: true
           tags: |
